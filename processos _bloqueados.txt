@@ -1,0 +1,69 @@
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE name = 'sp_BlockedProcesses' and type = 'P')
+DROP PROC sp_BlockedProcesses
+GO
+-------------------------------------------------------------------------------------------------------
+-- Name sp_BlockedProcesses
+-- Description Returns list of blocked processes and buffers for blocked and blocking processes
+-- Input None
+-- Created By Viktor Gorodnichenko
+-------------------------------------------------------------------------------------------------------
+CREATE PROC sp_BlockedProcesses
+AS
+SET NOCOUNT ON
+DECLARE @Blocked int
+DECLARE @BlockedBy int
+DECLARE @SqlStr varchar(1000)
+CREATE TABLE #TmpSysprocesses
+(BlockedSPID smallint,
+BlockedBuffer nvarchar(255) null,
+BlockingSPID smallint,
+BlockingBuffer nvarchar(255) null,
+waitresource nchar(256),
+dbid smallint,
+BlockedHostname nchar(128),
+BlockedProgram_name nchar(128),
+BlockedCmd nchar(16),
+BlockedLoginame nchar(128),
+BlockingHostname nchar(128),
+BlockingProgram_name nchar(128),
+BlockingCmd nchar(16),
+BlockingLoginame nchar(128))
+INSERT INTO #TmpSysprocesses
+SELECT blocked.spid 'BlockedSPID', null 'BlockedBuffer', blocked.blocked 'BlockingSPID',
+null 'BlockingBuffer', blocked.waitresource, blocked.dbid,
+blocked.hostname 'BlockedHostname', blocked.program_name 'BlockedProgram_name',
+blocked.cmd 'BlockedCmd', blocked.loginame 'BlockedLoginame',
+Blocking.hostname 'BlockingHostname', Blocking.program_name 'BlockingProgram_name',
+Blocking.cmd 'BlockingCmd', Blocking.loginame 'BlockingLoginame'
+FROM master..sysprocesses blocked
+JOIN master..sysprocesses blocking ON blocking.SPID = blocked.blocked
+WHERE blocked.Blocked > 0
+ 
+CREATE TABLE #tmpBuffer (EventType nvarchar(30), Parameters int, EventInfo nvarchar(255))
+DECLARE Processes CURSOR FOR
+SELECT BlockedSPID, BlockingSPID FROM #TmpSysprocesses
+OPEN Processes
+FETCH NEXT FROM Processes INTO @Blocked, @BlockedBy
+WHILE @@FETCH_STATUS = 0
+BEGIN
+SET @SqlStr = 'DBCC INPUTBUFFER ('+LTRIM(STR(@Blocked))+')'
+INSERT INTO #tmpBuffer EXEC (@SqlStr)
+UPDATE #TmpSysprocesses SET BlockedBuffer = EventInfo
+FROM #tmpBuffer
+WHERE BlockedSPID = @Blocked and BlockingSPID = @BlockedBy
+TRUNCATE TABLE #tmpBuffer
+SET @SqlStr = 'DBCC INPUTBUFFER ('+LTRIM(STR(@BlockedBy))+')'
+INSERT INTO #tmpBuffer EXEC (@SqlStr)
+UPDATE #TmpSysprocesses SET BlockingBuffer = EventInfo
+FROM #tmpBuffer
+WHERE BlockedSPID = @Blocked and BlockingSPID = @BlockedBy
+TRUNCATE TABLE #tmpBuffer
+FETCH NEXT FROM Processes INTO @Blocked, @BlockedBy
+END
+SELECT * FROM #TmpSysprocesses
+ 
+ 
+GO
+
+EXEC sp_BlockedProcesses

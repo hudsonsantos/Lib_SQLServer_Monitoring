@@ -1,0 +1,43 @@
+/******************* #1 **********************/
+/* Verifica consumo de CPU por base */
+
+SELECT
+      dbs.name
+    , cacheobjtype
+    , total_cpu_time
+    , total_execution_count
+FROM
+      (
+        SELECT TOP 10
+            SUM(qs.total_worker_time) AS total_cpu_time
+          , SUM(qs.execution_count) AS total_execution_count
+          , COUNT(*) AS number_of_statements
+          , qs.plan_handle
+        FROM
+            sys.dm_exec_query_stats qs
+        GROUP BY
+            qs.plan_handle
+        ORDER BY
+            SUM(qs.total_worker_time) DESC
+      ) a
+      INNER JOIN (
+                   SELECT
+                        plan_handle
+                      , pvt.dbid
+                      , cacheobjtype
+                   FROM
+                        (
+                          SELECT
+                              plan_handle
+                            , epa.attribute
+                            , epa.value
+                            , cacheobjtype
+                          FROM
+                              sys.dm_exec_cached_plans
+                              OUTER APPLY sys.dm_exec_plan_attributes(plan_handle) AS epa
+     /* WHERE cacheobjtype = 'Compiled Plan' AND objtype = 'adhoc' */
+                        ) AS ecpa PIVOT ( MAX(ecpa.value) FOR ecpa.attribute IN ( "dbid" , "sql_handle" ) ) AS pvt
+                 ) b
+            ON a.plan_handle = b.plan_handle
+      INNER JOIN sys.databases dbs
+            ON dbid = dbs.database_id;
