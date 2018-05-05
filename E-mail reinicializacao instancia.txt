@@ -1,0 +1,40 @@
+	
+DECLARE
+    @msg NVARCHAR(MAX),
+    @instancia VARCHAR(100),
+    @assunto VARCHAR(100);
+ 
+SELECT
+    @instancia = @@SERVERNAME;
+SET @assunto = 'A instancia ' + @instancia + ' Foi reiniciada';
+SET @msg = '<p> ' + @instancia + ' A Instancia foi reniciada.</p>';
+ 
+SET @msg = @msg + '<table border="2" cellspacing="2" cellpadding="2">';
+ 
+SET @msg = @msg + '<tbody align="left" style="font-family:Arial; font-size: 11;" 
+                   <TR><TH>Service Name</TH><TH>Startup Type</TH><TH>Status</TH>
+                   <TH>Startup Time</TH></TR></tbody>';
+ 
+SELECT
+    @msg = @msg + '<tbody align="left" style="font-family:Arial;
+                    font-size: 11;" <TR><TD>' + servicename + '</TD><TD>' 
+            + startup_type_desc + '</TD><TD>' + status_desc 
+                   + '</TD><TD>'+ CAST(last_startup_time AS VARCHAR(30))
+                   + '</TD></TR></tbody>'
+FROM
+    sys.dm_server_services;
+ 
+ 
+EXEC msdb.dbo.sp_send_dbmail
+    @profile_name = 'MSSQLSERVER',  -- 
+    @recipients = 'meu@email.com',
+    @subject = @assunto, 
+    @body = @msg, 
+    @body_format = 'HTML';
+
+
+
+
+-------------------------------------------------------------------
+colocar o script em um job
+No shedule modificar o shedule type para "start automatically...."

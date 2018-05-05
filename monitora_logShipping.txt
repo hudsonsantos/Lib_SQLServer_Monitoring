@@ -1,0 +1,11 @@
+select led.database_name,led.log_time,led.message,led.sequence_number,
+led.session_id,led.source
+from msdb.dbo.log_shipping_monitor_error_detail led
+
+
+
+select top 10 database_name,log_time,message,session_status
+from msdb.dbo.log_shipping_monitor_history_detail
+order by log_time desc
+
+
