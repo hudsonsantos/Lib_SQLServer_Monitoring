@@ -1,0 +1,17 @@
+SELECT [Total Lines] = COUNT(*),
+            [Distinct Lines] = COUNT(DISTINCT Codigo3),
+            -- the closer to 1, the better
+            [selectivity] = COUNT(DISTINCT Codigo3)/CAST( COUNT(*) AS DEC(10,2))
+    FROM testdmv
+
+SELECT [Total Lines] = COUNT(*),
+            [Distinct Lines] = COUNT(DISTINCT Codigo4),
+            -- the closer to 1, the better
+            [selectivity] = COUNT(DISTINCT Codigo4)/CAST( COUNT(*) AS DEC(10,2))
+    FROM testdmv
+
+
+
+-- Codigo testa a seletividade de duas colunas (codigo3 e codigo4) da view testdmv
+
+-- referencia: https://www.simple-talk.com/sql/performance/reducing-io-with-the-missing-indexes-dmvs/

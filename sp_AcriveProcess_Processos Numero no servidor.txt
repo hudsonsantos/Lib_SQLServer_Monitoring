@@ -1,0 +1,116 @@
+USE master
+GO
+IF EXISTS (SELECT * FROM sysobjects WHERE name = 'sp_ActiveProcesses' and type = 'P')
+DROP PROC sp_ActiveProcesses
+GO
+-------------------------------------------------------------------------------------------------------
+-- Name sp_ActiveProcesses
+-- Description Returns list of active processes and their buffer contents (what they execute)
+-- A process is considered as active if it has some changes of cpu time consumed or number
+-- of io operation in specified period.
+-- Input (optional) @Delay - Time interval to catch activity
+-- Output Result set with active processes
+-- Created By Viktor Gorodnichenko
+-------------------------------------------------------------------------------------------------------
+CREATE PROC sp_ActiveProcesses
+@Delay smallint = 5
+AS
+SET NOCOUNT ON
+IF @Delay > 59
+SET @Delay = 59
+IF @Delay < 1
+SET @Delay = 1
+print @Delay
+DECLARE @SPID int
+DECLARE @DelayClock char(8)
+DECLARE @SqlStr varchar(1000)
+DECLARE @Internal_Value int
+SET @DelayClock = '00:00:'+LTRIM(STR(@Delay))
+CREATE TABLE #TmpSysprocesses
+(EventTime datetime,
+FragmentDuration int,
+spid smallint,
+cpu int,
+physical_io int,
+cpuUpdate int null,
+physical_ioUpdate int null,
+hostname sysname,
+program_name sysname,
+loginame sysname,
+dbid smallint,
+dbname sysname null,
+IsActive bit null,
+SPIDBuffer nvarchar(255) null)
+INSERT INTO #TmpSysprocesses
+SELECT getdate(), null 'FragmentDuration', spid, SUM(cpu), SUM(physical_io), null, null, MAX(hostname), MAX(program_name),
+MAX(loginame), MAX(dbid), null, null, null
+FROM sysprocesses
+GROUP BY spid
+HAVING SUM(dbid) > 0
+WAITFOR DELAY @DelayClock
+CREATE TABLE #TmpSysprocesses2
+(EventTime datetime,
+spid smallint,
+cpu int,
+physical_io int,
+hostname sysname,
+program_name sysname,
+loginame sysname,
+dbid smallint)
+INSERT INTO #TmpSysprocesses2
+SELECT getdate(), spid, SUM(cpu), SUM(physical_io), MAX(hostname), MAX(program_name), MAX(loginame), MAX(dbid)
+FROM sysprocesses
+GROUP BY spid
+HAVING SUM(dbid) > 0
+ 
+UPDATE #TmpSysprocesses SET FragmentDuration = DATEDIFF(ms,t.EventTime,t2.EventTime), IsActive = 1,
+cpuUpdate = t2.cpu - t.cpu,
+physical_ioUpdate = t2.physical_io - t.physical_io, dbname = d.name
+FROM #TmpSysprocesses t
+JOIN #TmpSysprocesses2 t2 ON t2.spid = t.spid
+and t2.hostname = t.hostname
+and t2.loginame = t.loginame
+and (t2.cpu <> t.cpu or t2.physical_io <> t.physical_io)
+JOIN sysdatabases d ON d.dbid = t.dbid
+CREATE TABLE #tmpBuffer (EventType nvarchar(30), Parameters int, EventInfo nvarchar(255))
+DECLARE ActiveProcesses CURSOR FOR
+SELECT spid FROM #TmpSysprocesses WHERE IsActive = 1
+OPEN ActiveProcesses
+FETCH NEXT FROM ActiveProcesses INTO @SPID
+WHILE @@FETCH_STATUS = 0
+BEGIN
+SET @SqlStr = 'DBCC INPUTBUFFER ('+LTRIM(STR(@SPID))+')'
+INSERT INTO #tmpBuffer EXEC (@SqlStr)
+UPDATE #TmpSysprocesses SET SPIDBuffer = EventInfo
+FROM #tmpBuffer
+WHERE spid = @SPID
+TRUNCATE TABLE #tmpBuffer
+FETCH NEXT FROM ActiveProcesses INTO @SPID
+END
+DEALLOCATE ActiveProcesses
+CREATE TABLE #xp_msver (
+[Index] int,
+[Name] varchar(1000) null,
+Internal_Value int null,
+Character_value varchar(1000) null)
+INSERT INTO #xp_msver EXEC master..xp_msver 'ProcessorCount'
+SELECT @Internal_Value = Internal_Value FROM #xp_msver
+WHERE [Name] = 'ProcessorCount'
+SELECT spid 'ProcessId',
+cpu 'TotalCPU',
+cpuUpdate 'CPU_ConsumedInTheTimeFragment',
+physical_io 'TotalPhysical_IO',
+physical_ioUpdate 'Physical_IO_InTheTimeFragment',
+LEFT(hostname,12) 'Hostname',
+LEFT(program_name,30) 'ApplicationName', LEFT(loginame,30) 'NT_LoginName', dbname 'DatabaseName', SPIDBuffer
+FROM #TmpSysprocesses s WHERE IsActive = 1
+SELECT MAX(FragmentDuration) 'TheFragmentDuration', @Internal_Value 'NumberOfCPUs',
+SUM(cpuUpdate) 'SUM CPU_ConsumedInTheTimeFragment',
+SUM(physical_ioUpdate) 'SUM Physical_IO_InTheTimeFragment'
+FROM #TmpSysprocesses s WHERE IsActive = 1
+DROP TABLE #xp_msver
+
+GO
+
+EXEC sp_ActiveProcesses
+ 

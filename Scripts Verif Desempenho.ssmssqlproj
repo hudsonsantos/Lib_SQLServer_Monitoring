@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<SqlWorkbenchSqlProject xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Scripts Verif Desempenho">
+  <Items>
+    <LogicalFolder Name="Conexões" Type="2" Sorted="true">
+      <Items>
+        <ConnectionNode Name="10.42.160.2:hsantos">
+          <Created>2014-10-21T10:43:16.3508633-02:00</Created>
+          <Type>SQL</Type>
+          <Server>10.42.160.2</Server>
+          <UserName>hsantos</UserName>
+          <Authentication>SQL</Authentication>
+          <InitialDB>KLINIKOS</InitialDB>
+          <LoginTimeout>15</LoginTimeout>
+          <ExecutionTimeout>0</ExecutionTimeout>
+          <ConnectionProtocol>NotSpecified</ConnectionProtocol>
+          <ApplicationName>Microsoft SQL Server Management Studio - Consulta</ApplicationName>
+        </ConnectionNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Consultas" Type="0" Sorted="true">
+      <Items>
+        <FileNode Name="Consumo CPU por base.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>Consumo CPU por base.sql</FullPath>
+        </FileNode>
+        <FileNode Name="sp_usrtrackusers.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>sp_usrtrackusers.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_banco_maior_leitura&amp;gravacao.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_banco_maior_leitura&amp;gravacao.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_causas_espera_sql.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_causas_espera_sql.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_consulta_com_mais_CPU.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_consulta_com_mais_CPU.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_consulta_com_mais_IO.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_consulta_com_mais_IO.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_consultas_mais_bloqueios.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_consultas_mais_bloqueios.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_consultas_mais_executadas.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_consultas_mais_executadas.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_indices_ausentes.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_indices_ausentes.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_indices_maior_custo_manutencao.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_indices_maior_custo_manutencao.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_indices_mais_fragmentados.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_indices_mais_fragmentados.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_indices_menos_usados.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_indices_menos_usados.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_indices_mmais_usados.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_indices_mmais_usados.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_necessidade_de_indice.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_necessidade_de_indice.sql</FullPath>
+        </FileNode>
+        <FileNode Name="verif_table_maior_leituraEgravacao.sql">
+          <AssociatedConnectionMoniker>8c91a03d-f9b4-46c0-a305-b5dcc79ff907:10.42.160.2:False:hsantos</AssociatedConnectionMoniker>
+          <AssociatedConnSrvName>10.42.160.2</AssociatedConnSrvName>
+          <AssociatedConnUserName>hsantos</AssociatedConnUserName>
+          <FullPath>verif_table_maior_leituraEgravacao.sql</FullPath>
+        </FileNode>
+      </Items>
+    </LogicalFolder>
+    <LogicalFolder Name="Diversas" Type="3" Sorted="true">
+      <Items />
+    </LogicalFolder>
+  </Items>
+</SqlWorkbenchSqlProject>
